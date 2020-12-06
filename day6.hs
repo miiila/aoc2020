@@ -4,21 +4,14 @@ main = do
     contents <- readFile "day6_input"
     let input = lines contents
     -- Part 1
-        res = sum $ map (length . nub) $ getGroups input
+        res = sum $ length . nub <$> getGroups input concat
     print res
     -- Part 2
-    let res = sum $ map length $ getGroups2 input
+    let res = sum $ length <$> getGroups input (\x -> foldl intersect (head x) x)
     print res
 
-getGroups::[String] -> [String]
-getGroups [] = []
-getGroups s =
+getGroups::[String] -> ([String] -> String) -> [String]
+getGroups [] _ = []
+getGroups s f =
   let (g, rest) = break (== "") s
-   in [concat g] ++ getGroups (dropWhile (=="") rest)
-
-getGroups2::[String] -> [String]
-getGroups2 [] = []
-getGroups2 s =
-  let (g, rest) = break (== "") s
-      all = foldl intersect (head g) g
-   in [all]  ++ getGroups2 (dropWhile (=="") rest)
+   in [f g] ++ getGroups (dropWhile (== "") rest) f
