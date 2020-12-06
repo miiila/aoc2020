@@ -1,17 +1,12 @@
+import SplitOn
 import Data.List
 
 main = do
     contents <- readFile "day6_input"
-    let input = lines contents
+    let input = splitOn (lines contents) ""
     -- Part 1
-        res = sum $ length . nub <$> getGroups input concat
+        res = sum $ length . nub . concat <$> input
     print res
     -- Part 2
-    let res = sum $ length <$> getGroups input (foldl intersect ['a'..'z'])
+    let res = sum $ length . foldl intersect ['a'..'z'] <$> input
     print res
-
-getGroups::[String] -> ([String] -> String) -> [String]
-getGroups [] _ = []
-getGroups s f =
-  let (g, rest) = break (== "") s
-   in [f g] ++ getGroups (dropWhile (== "") rest) f
