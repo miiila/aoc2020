@@ -8,5 +8,5 @@ main = do
         res = sum $ length . nub . concat <$> input
     print res
     -- Part 2
-    let res = sum $ length . foldl intersect ['a'..'z'] <$> input
+    let res = sum $ length . foldl1 intersect <$> input
     print res
