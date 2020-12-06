@@ -7,7 +7,7 @@ main = do
         res = sum $ length . nub <$> getGroups input concat
     print res
     -- Part 2
-    let res = sum $ length <$> getGroups input (\x -> foldl intersect (head x) x)
+    let res = sum $ length <$> getGroups input (foldl intersect ['a'..'z'])
     print res
 
 getGroups::[String] -> ([String] -> String) -> [String]
