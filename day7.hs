@@ -8,7 +8,7 @@ main = do
     let input = lines contents
     -- Part 1
     let bags = Map.fromList $ getBagRulePairFromRow <$> input
-        res = length $ filter (==True) $ map (\x -> canContainBag x "shiny gold" bags) $ Map.keys bags \\ ["shiny gold"]
+        res = length $ filter (\x -> canContainBag x "shiny gold" bags) $ Map.keys bags \\ ["shiny gold"]
     print res
     -- Part 2
     let res = countBags "shiny gold" bags - 1
