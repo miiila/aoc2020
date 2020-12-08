@@ -7,12 +7,12 @@ main = do
     let input = lines contents
     -- Part 1
         program = parseInstruction <$> input
-        res = runProgram program 0 (Set.fromList []) 0 (length input)
+        res = runProgram program (0, Set.fromList [], 0, length input)
     print res
     -- Part 2
     let jmpsNops = sort $ findIndices (\x -> fst x == Jmp || fst x == Nop) program
-        programs = runProgram <$> (modifyProgram <$> repeat program <*> jmpsNops)
-        res = find fst $ programs <*> [0] <*> [Set.fromList []] <*> [0] <*> [length input]
+        programs = zipWith modifyProgram (repeat program) jmpsNops
+        res = find fst $ zipWith runProgram programs (repeat (0, Set.fromList [], 0, length input))
     print res
 
 
@@ -24,14 +24,14 @@ modifyProgram program insChanged =
              newIns (Jmp, x) = (Nop, x)
 
 
-runProgram::[Operation] -> Int -> Set.Set Int -> Int -> Int -> (Bool, Int)
-runProgram program acc used current targetInstructionNumber
+runProgram::[Operation] -> (Int, Set.Set Int, Int, Int) -> (Bool, Int)
+runProgram program (acc, used, current, targetInstructionNumber)
  | Set.member current used = (False, acc)
  | current == targetInstructionNumber = (True, acc)
  | otherwise =
      let (newAcc, newCurrent) = runOperation (program !! current) acc current
          newUsed = Set.insert current used
-      in runProgram program newAcc newUsed newCurrent targetInstructionNumber
+      in runProgram program (newAcc, newUsed, newCurrent, targetInstructionNumber)
 
 
 runOperation::Operation -> Int -> Int -> (Int, Int)
