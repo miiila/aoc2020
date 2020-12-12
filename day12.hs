@@ -1,3 +1,6 @@
+import Data.List
+import Data.Maybe
+
 main = do
     contents <- readFile "day12_input"
     let input = (\(x:xs) -> (x, read xs::Int)) <$> lines contents
@@ -49,19 +52,13 @@ handleMov (coords, dir) (c, v) =
             'R' -> (coords, handleRightTurn dir v)
 
 handleLeftTurn::Direction -> Int -> Direction
-handleLeftTurn 'N' 0 = 'N'
-handleLeftTurn 'N' 90 = 'W'
-handleLeftTurn 'N' 180 = 'S'
-handleLeftTurn 'N' 270 = 'E'
-handleLeftTurn 'N' 360 = 'N'
-handleLeftTurn 'E' v = handleLeftTurn 'N' (v-90)
-handleLeftTurn 'S' v
-  | v >= 180 = handleLeftTurn 'N' (v-180)
-  | v < 180 = handleLeftTurn 'N' (v+180)
-handleLeftTurn 'W' v = handleLeftTurn 'N' (v+90)
+handleLeftTurn d v = handleRightTurn d (360-v)
 
 handleRightTurn::Direction -> Int -> Direction
-handleRightTurn d v = handleLeftTurn d (360-v)
+handleRightTurn d v =
+  let i = fromJust $ d `elemIndex` "NESW"
+      o = div v 90
+  in "NESW" !! mod (i+o) 4
 
 handleRel::Coords -> Instruction -> Coords
 handleRel (x, y) (c,v) =
