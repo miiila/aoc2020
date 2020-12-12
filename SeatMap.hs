@@ -25,19 +25,21 @@ getSeatMap input =
 
 getSeats:: [Char] -> Int -> [Seat]
 getSeats row rowNumber =
-  zip [[rowNumber, x] | x <- [0..(length row)]] (getSeat <$> row)
+  zip [[rowNumber, x] | x <- [0..(length row)]] (map (\x -> read [x]) row)
 
 type SeatMap = Map.Map SeatPos SeatState
 type Seat = (SeatPos, SeatState)
 type SeatPos = [Int]
-data SeatState = Floor | Empty | Occupied deriving (Eq, Read)
+data SeatState = Floor | Empty | Occupied deriving (Eq)
 
 instance Show SeatState where
   show Floor = "."
   show Empty = "L"
   show Occupied = "#"
 
-getSeat::Char -> SeatState
-getSeat '.' = Floor
-getSeat 'L' = Empty
-getSeat '#' = Occupied
+instance Read SeatState where
+  readsPrec _ (x:xs) =
+    let a = case x of '.' -> Floor
+                      'L' -> Empty
+                      '#' -> Occupied
+    in [(a,xs)]
